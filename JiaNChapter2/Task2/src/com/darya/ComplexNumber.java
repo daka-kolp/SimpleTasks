@@ -42,9 +42,4 @@ public class ComplexNumber {
         return new ComplexNumber(this.x * a.x - this.y * a.y, this.x * a.x + this.y * a.y);
     }
 
-
-    public static void main(String[] args) {
-
-    }
-
 }
