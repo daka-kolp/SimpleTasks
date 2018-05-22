@@ -1,11 +1,6 @@
 package com.darya;
 
-public class Chapter2 {
-    public static void main(String[] args) {
-
-    }
-
-    private class Circle {
+public class Circle {
         private double radius;
         private double xCenter;
         private double yCenter;
@@ -45,12 +40,17 @@ public class Chapter2 {
             this.yCenter = this.yCenter + b;
         }
 
-        public boolean isInside(int x, int y){//!!!
-            return  false;
+        public boolean isInside(int x, int y){
+            double r = Math.sqrt(Math.pow(x - this.xCenter, 2) + Math.pow(y - this.yCenter, 2));
+            return  r <= this.radius;
         }
 
-        public Rect boundingBox(){//!!!
-            return null;
+        public Rect boundingBox(){
+            double x1 = this.xCenter - this.radius;
+            double y1 = this.yCenter - this.radius;
+            double x2 = this.xCenter + this.radius;
+            double y2 = this.yCenter + this.radius;
+            return new Rect((int)x1, (int)y1, (int)x2, (int)y2);
         }
 
         public double getDiameter() {
@@ -65,4 +65,4 @@ public class Chapter2 {
             return "[" + xCenter + ", " + yCenter + "] radius: " + radius ;
         }
     }
-}
+
