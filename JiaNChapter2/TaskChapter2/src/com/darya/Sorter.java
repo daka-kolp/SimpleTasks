@@ -137,7 +137,7 @@ public class Sorter {
 
     public static class Test {
 
-        static class SortableComplexNumber extends ComplexNumber implements Sorter.Comparable{
+        static class SortableComplexNumber extends ComplexNumber implements Comparable{
 
             public SortableComplexNumber(double real, double imaginary) {
                 super(real, imaginary);
