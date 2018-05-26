@@ -1,9 +1,6 @@
 package com.dakakolp;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class FileCopy {
 
@@ -34,14 +31,53 @@ public class FileCopy {
             String response = in.readLine();
             if(!response.equals("Y") && !response.equals("y")) abort("The file has not been rewritten");
         } else {
-            
+            String parent = to_file.getParent();
+            if(parent == null) parent = System.getProperty("user.dir");
+
+            File dir = new File(parent);
+
+            if(!dir.exists()) abort("The directory does not exist: " + parent);
+
+            if(dir.isFile()) abort("The directory is not directory???: " + parent);
+
+            if(!dir.canWrite()) abort("The directory does not accessible for writing: " + parent);
+
+            FileInputStream from = null;
+            FileOutputStream to = null;
+
+            try {
+                from = new FileInputStream(from_file);
+                to = new FileOutputStream(to_file);
+
+                byte[] buffer = new byte[4096];
+                int bytes_read;
+
+                while((bytes_read = from.read(buffer)) != -1)
+                    to.write(buffer, 0, bytes_read);
+            } finally {
+                if (from != null) {
+                    try {
+                        from.close();
+                    } catch (IOException e) {}
+                }
+                if (to != null) {
+                    try {
+                        to.close();
+                    } catch (IOException e) {}
+                }
+            }
         }
-
-
-
     }
 
     public static void main(String[] args) {
-
+        if(args.length != 2)
+            System.err.println("Format: java FileCopy <from_file> <to_file>");
+        else {
+            try {
+                copy(args[0], args[1]);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }
