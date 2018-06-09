@@ -30,7 +30,13 @@ public class HTMLWriter extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
+        if ((window == null) || (document == null)) return;
 
+        if (((Boolean)window.getMember("closed")).booleanValue()) return;
+
+        String s = new String(cbuf, off, len);
+
+        document.call("write", new String[] {s});
     }
 
     @Override
@@ -40,6 +46,48 @@ public class HTMLWriter extends Writer {
 
     @Override
     public void close() throws IOException {
+        document.call("close", null);
+        document = null;
+    }
 
+    public void closeWindow() throws IOException {
+        if (document != null) close();
+
+        if(!((Boolean)window.getMember("closed")).booleanValue())
+            window.call("close", null);
+        window = null;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        closeWindow();
+    }
+
+    public static class Test extends Applet {
+        HTMLWriter out;
+
+        public void init (){
+            try {
+                URL url = new URL(this.getDocumentBase(), this.getParameter("url"));
+                Reader in = new InputStreamReader(url.openStream());
+                out = new HTMLWriter(this, 400, 200);
+                char[] buffer = new char[4096];
+                int numchars;
+                while ((numchars = in.read(buffer)) != -1)
+                    out.write(buffer, 0, numchars);
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void destroy() {
+            try {
+                out.closeWindow();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
